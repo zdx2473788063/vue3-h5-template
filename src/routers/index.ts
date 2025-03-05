@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
-import { layoutRouter, staticRouter } from "./modules/staticRouter";
+import { staticRouter } from "./modules/staticRouter";
 import { stringifyQuery, parseQuery } from "./modules/query";
 
 // 路由访问两种模式：带#号的哈希模式，正常路径的web模式。
@@ -17,7 +17,7 @@ const router = createRouter({
     history: routerMode[mode](import.meta.env.VITE_PUBLIC_URL),
     stringifyQuery,
     parseQuery,
-    routes: [...layoutRouter, ...staticRouter],
+    routes: [...staticRouter],
     strict: false,
     // 滚动行为
     scrollBehavior() {
