@@ -38,7 +38,7 @@ export default (({command, mode}: ConfigEnv): UserConfig => {
             include: [
                 "vue",
                 "vue-routers",
-                "axios",
+                "axios"
             ]
         }
     });
