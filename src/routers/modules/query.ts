@@ -76,6 +76,7 @@ export const parseQuery = (query: string) => {
     query = isBase64(query) ? decrypt(query) : query;
     query.split("&").forEach(param => {
         const parts = param.split("=");
+        // @ts-ignore
         const key = decode(parts.shift());
         const val = parts.length > 0 ? decode(parts.join("")) : null;
         if (res[key] === undefined) {
