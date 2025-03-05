@@ -1,16 +1,19 @@
-import Axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import Axios, {AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse} from "axios";
 import Qs from "qs";
-import { RequestOptions, ResultParams } from "./type";
-import { ContentTypeEnum, ResultEnum } from "./http-enum";
-import { checkStatus } from "./check-status";
-import { cloneDeep } from "lodash-es";
-
+import {RequestOptions, ResultParams} from "./type";
+import {ContentTypeEnum, ResultEnum} from "./http-enum";
+import {checkStatus} from "./check-status";
+import {cloneDeep} from "lodash-es";
+const getServerConfig = () => {
+    return Axios.get('/config.json')
+}
+const baseURL = (await getServerConfig()).data.baseURL
 // 请求队列
 const pendingRequest = new Map();
 // 生成请求Key
 const generateReqKey = (config: AxiosRequestConfig) => {
     // 根据请求方案、请求地址、请求包体 判断是否为重复请求
-    const { url, method, params, data } = config;
+    const {url, method, params, data} = config;
     return [method, url, Qs.stringify(params), Qs.stringify(data)].join("&");
 };
 // 将当前请求加入请求队列
@@ -53,16 +56,24 @@ class IAxios {
         const _conf: AxiosRequestConfig = cloneDeep(configs);
         const _opts: RequestOptions = Object.assign({}, this.options, options);
         // 格式化接口地址，兼容第三方接口
-        // _conf.url = `${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_API_URL}/${_conf.url}`;
-        _conf.url = `${import.meta.env.VITE_BASE_URL}/${_conf.url}`;
-        const { contentType, isShowErrorMessage, errorMessageText, isTransformRequestResult, isShowServerErrorMessage, isTimeout, timeoutNumber, ignorePendingRequest, ignoreToken } = _opts;
+        _conf.url = baseURL + `${import.meta.env.VITE_API_URL}/${_conf.url}`;
+        const {
+            contentType,
+            isShowErrorMessage,
+            errorMessageText,
+            isTransformRequestResult,
+            isShowServerErrorMessage,
+            isTimeout,
+            timeoutNumber,
+            ignorePendingRequest
+        } = _opts;
         if (contentType) {
             // const userStore = useUserStore();
             _conf.headers = {
                 ..._conf.headers,
                 // 是否忽略token，默认不忽略
                 // Authorization: ignoreToken ? "" : userStore.token,
-                Authorization:"",
+                Authorization: "",
                 "Content-Type": contentType
             };
         }
@@ -84,7 +95,7 @@ class IAxios {
         this.instance.interceptors.response.use(
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             (res: AxiosResponse<ResultParams | any>) => {
-                const { data, config } = res;
+                const {data, config} = res;
                 if (ignorePendingRequest) {
                     removePendingRequest(config);
                 }
@@ -118,6 +129,7 @@ class IAxios {
                             });
                             return Promise.reject(data?.data);
                         }
+                        alert(data?.message)
                         return Promise.reject(data?.data);
                     // return Promise.resolve(data);
                 }
@@ -131,7 +143,7 @@ class IAxios {
                 }
                 // 是否统一处理http接口请求异常
                 if (isShowErrorMessage) {
-                    const { data, statusText } = err?.response as AxiosResponse;
+                    const {data, statusText} = err?.response as AxiosResponse;
 
                     handleError({
                         ...err,

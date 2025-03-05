@@ -1,38 +1,30 @@
-import { RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
+import { staticRouter } from "./modules/staticRouter";
+import { stringifyQuery, parseQuery } from "./modules/query";
 
-// import Layout from "@/layout/index.vue";
-import { HOME_URL} from "@/config";
+// 路由访问两种模式：带#号的哈希模式，正常路径的web模式。
+const routerMode: any = {
+    hash: () => createWebHashHistory(),
+    history: () => createWebHistory()
+};
 
-/**
- * LayoutRouter (布局路由)
- */
-export const layoutRouter: RouteRecordRaw[] = [
-    {
-        path: "/", // 路由访问路径[唯一]
-        name: "home", // 命名路由[唯一]
-        redirect: HOME_URL,
-        children: [
-            {
-                path: HOME_URL, // [唯一]
-                component: () => import("@/views/home/index.vue"),
-                meta: {
-                    title: "首页", // 标题
-                    visible: true, // 代表路由在菜单中是否隐藏，是否隐藏[false 隐藏，true 显示]
-                    keepAlive: true // 是否缓存路由数据[true 是，false 否]
-                }
-            }
-        ]
+// .env配置文件读取
+const mode = import.meta.env.VITE_ROUTER_MODE;
+
+// 创建路由器对象
+const router = createRouter({
+    // 路由模式hash或者默认不带#
+    history: routerMode[mode](import.meta.env.VITE_PUBLIC_URL),
+    stringifyQuery,
+    parseQuery,
+    routes: [...staticRouter],
+    strict: false,
+    // 滚动行为
+    scrollBehavior() {
+        return {
+            left: 0,
+            top: 0
+        };
     }
-];
-
-export const staticRouter: RouteRecordRaw[] = [
-    {
-        path: "/home/index", // [唯一]
-        component: () => import("@/views/home/index.vue"),
-        meta: {
-            title: "首页", // 标题
-            visible: true, // 代表路由在菜单中是否隐藏，是否隐藏[false 隐藏，true 显示]
-            keepAlive: true // 是否缓存路由数据[true 是，false 否]
-        }
-    },
-];
+});
+export default router;
