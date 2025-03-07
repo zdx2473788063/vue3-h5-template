@@ -1,6 +1,6 @@
 # Vue 3 + TypeScript + Vite + Unocss
 
-未添加UI库的H5框架
+封装了展开收起弹窗组件，未添加UI库的H5框架
 
 执行安装命令：pnpm install
 

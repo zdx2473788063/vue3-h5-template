@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full bg-red text-50px flex justify-center items-center">123</div>
+  1
 </template>
 <script setup lang="ts">
 </script>

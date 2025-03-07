@@ -1,4 +1,11 @@
-import { defineConfig, presetAttributify, presetTypography, presetUno, transformerDirectives, transformerVariantGroup } from "unocss";
+import {
+    defineConfig,
+    presetAttributify,
+    presetTypography,
+    presetUno,
+    transformerDirectives,
+    transformerVariantGroup
+} from "unocss";
 
 export default defineConfig({
     shortcuts: [],
@@ -10,5 +17,8 @@ export default defineConfig({
     transformers: [
         transformerVariantGroup(), // windi CSS的变体组功能
         transformerDirectives() //  @apply @screen theme()转换器
+    ],
+    rules: [
+        ['text-bold', {'font-family': "'bold',serif"}]
     ]
 });
